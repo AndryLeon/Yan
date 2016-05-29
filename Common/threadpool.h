@@ -1,7 +1,3 @@
-//
-// Created by andryleon.
-// Email : andryleon@163.com
-//
 
 #ifndef YAN_THREADPOOL_H
 #define YAN_THREADPOOL_H

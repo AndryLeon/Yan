@@ -12,7 +12,7 @@ namespace Yan{
         NOTICE, TRACE, DEBUG, WARN, FATAL
     };
 
-    LogLevel logLevel = TRACE;
+    extern LogLevel logLevel;
 
     inline LogLevel GetLogLevel(){
         return logLevel;
@@ -23,19 +23,19 @@ namespace Yan{
     }
 
 #define LOG_NOTICE(fmt, ...) if(Yan::GetLogLevel() <= Yan::NOTICE) \
-        fprintf(stderr, "[NOTICE][%s:%d]" fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__);
+        fprintf(stderr, "[NOTICE][%s:%d]" fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 
 #define LOG_TRACE(fmt, ...) if(Yan::GetLogLevel() <= Yan::TRACE) \
-        fprintf(stderr, "[TRACE][%s:%d]" fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__);
+        fprintf(stderr, "[TRACE][%s:%d]" fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 
 #define LOG_DEBUG(fmt, ...) if(Yan::GetLogLevel() <= Yan::DEBUG) \
-        fprintf(stderr, "[DEBUG][%s:%d]" fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__);
+        fprintf(stderr, "[DEBUG][%s:%d]" fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 
 #define LOG_WARN(fmt, ...) if(Yan::GetLogLevel() <= Yan::WARN) \
-        fprintf(stderr, "[WARN][%s:%d]" fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__);
+        fprintf(stderr, "[WARN][%s:%d]" fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 
 #define LOG_FATAL(fmt, ...) if(Yan::GetLogLevel() <= Yan::FATAL) \
-        fprintf(stderr, "[FATAL][%s:%d]" fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__);
+        fprintf(stderr, "[FATAL][%s:%d]" fmt "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 }
 
 #endif //YAN_LOG_H

@@ -5,6 +5,7 @@
 
 #include <queue>
 #include "noncopyable.h"
+#include "condition.h"
 #include "mutex.h"
 
 namespace Yan {

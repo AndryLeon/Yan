@@ -44,7 +44,7 @@ namespace Yan {
                 for(int i = 0; i < threads_.size(); i++) {
                     threads_[i].Join();
                 }
-                running_ = false;    //
+                running_ = false;
                 assert(doneJobs_ == 0);
             }
         }

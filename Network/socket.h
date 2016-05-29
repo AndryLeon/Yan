@@ -1,39 +1,37 @@
-//
-// Created by andryleon.
-// Email : andryleon@163.com
-//
 
 #ifndef YAN_SOCKET_H
 #define YAN_SOCKET_H
 
+#include <netinet/in.h>
+
 namespace Yan {
 
-        class InetAddress;
+    class InetAddress;
 
-        class Socket {
-        public:
-            Socket(int fd);
-            ~Socket();
+    class Socket {
+    public:
+        Socket(int fd);
+        ~Socket();
 
-            static int CreateNonblockingSocket();
-            static int Connect(int fd, const struct sockaddr_in& addr);
-            static struct sockaddr_in GetLocalSockAddr(int sockfd);
-            static struct sockaddr_in GetPeerSockAddr(int sockfd);
+        static int CreateNonblockingSocket();
+        static int Connect(int fd, const struct sockaddr_in& addr);
+        static struct sockaddr_in GetLocalSockAddr(int sockfd);
+        static struct sockaddr_in GetPeerSockAddr(int sockfd);
 
-            int GetFd() const;
+        int GetFd() const;
 
-            void Bind(const InetAddress& address);
-            void Listen();
-            int Accept(InetAddress* peer_address);
+        void Bind(const InetAddress& address);
+        void Listen();
+        int Accept(InetAddress* peer_address);
 
-            void SetTcpNoDelay(bool opt);
-            void SetReuseAddr(bool opt);
-            void SetReusePort(bool opt);
-            void SetKeepAlive(bool opt);
+        void SetTcpNoDelay(bool opt);
+        void SetReuseAddr(bool opt);
+        void SetReusePort(bool opt);
+        void SetKeepAlive(bool opt);
 
-        private:
-            const int socketFd_;
-        };
+    private:
+        const int socketFd_;
+    };
 
 }
 
