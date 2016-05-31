@@ -9,7 +9,7 @@ namespace Yan {
          eventPool_(eventPool),
          connector_(remoteAddr, eventPool_)
     {
-        connector_.SetOnNewConnectionCallback(std::bind(&TcpClient::OnNewConnection, this, std::placeholders::_1));
+        connector_.SetOnNewConnectionCallback(std::bind(&TcpClient::onNewConnection, this, std::placeholders::_1));
     }
 
     TcpClient::~TcpClient(){
@@ -26,7 +26,7 @@ namespace Yan {
         }
     }
 
-    void TcpClient::DisConnect() {
+    void TcpClient::Disconnect() {
         if(isConnected && tcpConnectionPtr_){
             Common::MutexLock m(mutex_);
             isConnected = false;
@@ -34,7 +34,7 @@ namespace Yan {
         }
     }
 
-    void TcpClient::OnNewConnection(int fd) {
+    void TcpClient::onNewConnection(int fd) {
         InetAddress local(Socket::GetLocalSockAddr(fd));
         InetAddress remote(Socket::GetPeerSockAddr(fd));
 
@@ -42,7 +42,7 @@ namespace Yan {
         tmpPtr_->SetConnectionCallback(connectionCallback_);
         tmpPtr_->SetWriteCallback(writeCompleteCallback_);
         tmpPtr_->SetReadCallback(readCompleteCallback_);
-        tmpPtr_->SetCloseCallback(std::bind(&TcpClient::OnClose, this, std::placeholders::_1));
+        tmpPtr_->SetCloseCallback(std::bind(&TcpClient::onClose, this, std::placeholders::_1));
 
         tmpPtr_->Build();
 
@@ -50,13 +50,13 @@ namespace Yan {
         tcpConnectionPtr_ = tmpPtr_;
     }
 
-    void TcpClient::OnClose(const TcpConnectionPtr& tcpCon){
+    void TcpClient::onClose(const TcpConnectionPtr& tcpCon){
         {
             Common::MutexLock m(mutex_);
             assert(tcpConnectionPtr_ == tcpCon);
             tcpConnectionPtr_.reset();
         }
-        tcpCon->Disable();
+        tcpCon->Disable();   //can be delete
     }
 
 }

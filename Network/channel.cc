@@ -7,7 +7,7 @@
 
 namespace Yan {
 
-    volatile int Channel::ID = 0;
+    volatile std::atomic_int Channel::ID(0);
 
     Channel::Channel(int fd, EventPool* eventPool)
         :id_(++ID),
@@ -21,38 +21,6 @@ namespace Yan {
 
     Channel::~Channel() {
         LOG_TRACE("Channel::~Channel, id : %d, fd : %d\n", id_, fd_);
-    }
-
-    void Channel::SetReadCallback(const ReadCallback& rcb){
-        readCallback_ = rcb;
-    }
-
-    void Channel::SetWriteCallback(const WriteCallback &wcb) {
-        writeCallback_ = wcb;
-    }
-
-    void Channel::SetCloseCallback(const CloseCallback &ccb) {
-        closeCallback_ = ccb;
-    }
-
-    int Channel::GetFd() const {
-        return fd_;
-    }
-
-    int Channel::GetEvents() const {
-        return events_;
-    }
-
-    void Channel::SetRevents(int revents){
-        revents_ = revents;
-    }
-
-    int Channel::GetStatus() const {
-        return status_;
-    }
-
-    void Channel::SetStatus(int status) {
-        status_ = status;
     }
 
     void Channel::Tie(const std::shared_ptr<void>& obj){
@@ -76,17 +44,17 @@ namespace Yan {
         if(isTied){
             std::shared_ptr<void> guard = tied_obj.lock();
             if(guard){
-                SafeEventHandle();
+                safeEventHandle();
             }else{
-                LOG_TRACE("Channel::EventHandle, Disable()\n");
-                Disable();
+                LOG_TRACE("Channel::EventHandle, Unregister()\n");
+                Unregister();
             }
         }else{
-            SafeEventHandle();
+            safeEventHandle();
         }
     }
 
-    void Channel::SafeEventHandle() {
+    void Channel::safeEventHandle() {
         int revents = revents_;
 
         LOG_TRACE("id=%u, fd=%d\n", id_, fd_);

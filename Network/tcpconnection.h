@@ -48,15 +48,26 @@ namespace Yan {
             closeCallback_ = cb;
         }
 
+        std::string GetLocalAddrString() const {
+            return localAddr_.ToString();
+        }
+
+        std::string GetRemoteAddrString() const {
+            return remoteAddr_.ToString();
+        }
+
+
     private:
-        void QueueWrite(const std::string& s);
-        void OnWrite();
-        void OnRead();
-        void OnClose();
+        void queueWrite(const std::string& s);
+        void onWrite();
+        void onRead();
+        void onClose();
 
         static volatile std::atomic_int ID;
         const int id_;
         volatile std::atomic_bool isConnected_;
+        //TcpConnection 对socket和channel进行管理
+        //socket析构时关闭fd,TcpConnection析构时注销channel
         Socket socket_;
         Channel channel_;
         InetAddress localAddr_;
@@ -66,7 +77,7 @@ namespace Yan {
         Buffer inBuffer_;
         Buffer outBuffer_;
 
-        ConnectionCallback connectionCallback_;  //used in Build
+        ConnectionCallback connectionCallback_;  //called when connection is built
         WriteCompleteCallback writeCompleteCallback_;
         ReadCompleteCallback readCompleteCallback_;
         CloseCallback closeCallback_;

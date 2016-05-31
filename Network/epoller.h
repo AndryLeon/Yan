@@ -8,6 +8,7 @@
 
 #include "../Common/noncopyable.h"
 
+
 namespace Yan {
 
     class Channel;

@@ -5,6 +5,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
 
 set(SOURCE_FILES
         demo/echoserver.cc
+
         Common/blockingqueue.h
         Common/condition.h
         Common/log.cc
@@ -39,6 +40,6 @@ set(SOURCE_FILES
         Network/tcpserver.cc
         Network/tcpserver.h
         Network/util.h
-        )
+        Network/timequeue.h)
 
 add_executable(Yan ${SOURCE_FILES})

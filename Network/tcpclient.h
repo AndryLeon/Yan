@@ -17,7 +17,7 @@ namespace Yan {
         ~TcpClient();
 
         void Connect();
-        void DisConnect();
+        void Disconnect();
 
         void SetConnectionCallback(const ConnectionCallback& cb){
             connectionCallback_ = cb;
@@ -32,8 +32,8 @@ namespace Yan {
         }
 
     private:
-        void OnNewConnection(int fd);
-        void OnClose(const TcpConnectionPtr&);
+        void onNewConnection(int fd);
+        void onClose(const TcpConnectionPtr&);
 
         volatile std::atomic_bool isConnected;
         Common::Mutex mutex_;

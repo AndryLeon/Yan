@@ -55,9 +55,8 @@ namespace Yan {
             assert(iter != connectionMap_.end());
             connectionMap_.erase(iter);
         }
-        conPtr->Disable();
+        conPtr->Disable();  //can be delete
     }
-
 
 }
 

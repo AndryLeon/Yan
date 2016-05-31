@@ -14,16 +14,16 @@ namespace Yan {
 
     void Connector::Connect() {
         isConnected_ = true;
-        eventPool_->PutTask(std::bind(&Connector::QueueConnect, this));
+        eventPool_->PutTask(std::bind(&Connector::queueConnect, this));  //
     }
 
-    void Connector::QueueConnect(){
+    void Connector::queueConnect(){
         if(isConnected_){
             int newFd = Socket::CreateNonblockingSocket();
             int result = Socket::Connect(newFd, remote_address_.GetSockaddr() );
             if(result == 0 || errno == EINPROGRESS){
                 conn_channel_.reset(new Channel(newFd, eventPool_));
-                conn_channel_->SetWriteCallback(std::bind(&Connector::OnConnect, this));
+                conn_channel_->SetWriteCallback(std::bind(&Connector::onConnect, this));
                 conn_channel_->Register();
             }else{
                 ::close(newFd);
@@ -32,11 +32,11 @@ namespace Yan {
         }
     }
 
-    void Connector::OnConnect() {
+    void Connector::onConnect() {
         if(isConnected_){
             conn_channel_->Unregister();
             int fd = conn_channel_->GetFd();
-            onNewConnectionCallback_(fd);
+            onNewConnectionCallback_(fd);  //
         }
     }
 

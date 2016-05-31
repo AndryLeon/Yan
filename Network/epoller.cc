@@ -35,6 +35,7 @@ namespace Yan {
         ch->SetStatus(Add);
 
         LOG_TRACE("Channel::Register fd : %d\n", ch->GetFd());
+
         if(::epoll_ctl(epollFd_, EPOLL_CTL_ADD, ch->GetFd(), &ev) < 0) {
             LOG_WARN("Epoller::AddChannel, error: %s", strerror(errno));
         }
@@ -58,7 +59,7 @@ namespace Yan {
 
     void Epoller::DeleteChannel(Channel* ch){
         ch->SetStatus(Delete);
-
+        LOG_TRACE("Channel::Delete fd : %d\n", ch->GetFd());
         if(::epoll_ctl(epollFd_, EPOLL_CTL_DEL, ch->GetFd(), NULL) < 0){
             LOG_WARN("Epoller::DeleteChannel, error: %s", strerror(errno));
         }

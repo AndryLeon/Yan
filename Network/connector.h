@@ -25,8 +25,8 @@ namespace Yan {
         }
 
     private:
-        void QueueConnect();
-        void OnConnect();
+        void queueConnect();
+        void onConnect();
 
         volatile std::atomic_bool isConnected_;
         InetAddress remote_address_;

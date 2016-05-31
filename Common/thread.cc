@@ -9,14 +9,19 @@ namespace Yan {
 
     namespace Common {
 
-        __thread int t_cached_pid_t = 0;
+        namespace {
+            __thread int t_cached_tid_t = 0;
+        }
+
+        static void CacheTid() {
+            if(t_cached_tid_t == 0) {
+                t_cached_tid_t = static_cast<int>(::syscall(SYS_gettid));
+            }
+        }
 
         int Thread::GetPid(){
-            if(t_cached_pid_t == 0){
-                t_cached_pid_t = static_cast<int>(::syscall(SYS_gettid));
-                LOG_TRACE("Thread::GetPid : %d\n", t_cached_pid_t);
-            }
-            return t_cached_pid_t;
+            CacheTid();
+            return t_cached_tid_t;
         }
 
         Thread::Thread(const ThreadFunc& tf_)
@@ -52,9 +57,8 @@ namespace Yan {
             isStarted_ = true;
 
             ThreadData* data = new ThreadData(this->threadFunc_);
-            LOG_TRACE("Thread::Start : %d\n", GetPid());
             pthread_create(&pid_, NULL, &startThread, data);
-
+            LOG_TRACE("Thread::Start : %d, pid : %d\n", GetPid(), pid_);
         }
 
         void Thread::Join(){

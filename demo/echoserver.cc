@@ -20,8 +20,7 @@ public:
 
 private:
     void OnConnection(const TcpConnectionPtr& conn){
-        LOG_TRACE("ID:%d \n", conn->GetID());
-        conn->Write("hello ");
+        LOG_TRACE("Get a new Connection, connection ID:%d\n", conn->GetID());
     }
 
     void OnRead(const TcpConnectionPtr& conn, Buffer* buffer){
@@ -29,6 +28,7 @@ private:
         LOG_TRACE("ID:%d Get:%s\n", conn->GetID(), s.c_str());
         conn->Write(s);
     }
+
     EventPool* eventPool_;
     TcpServer tcpServer_;
 };

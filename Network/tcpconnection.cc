@@ -18,9 +18,9 @@ namespace Yan {
 
         socket_.SetKeepAlive(true);
 
-        channel_.SetWriteCallback(std::bind(&TcpConnection::OnWrite, this));
-        channel_.SetReadCallback(std::bind(&TcpConnection::OnRead, this));
-        channel_.SetCloseCallback(std::bind(&TcpConnection::OnClose, this));
+        channel_.SetWriteCallback(std::bind(&TcpConnection::onWrite, this));
+        channel_.SetReadCallback(std::bind(&TcpConnection::onRead, this));
+        channel_.SetCloseCallback(std::bind(&TcpConnection::onClose, this));
     }
 
     TcpConnection::~TcpConnection() {
@@ -30,7 +30,7 @@ namespace Yan {
 
     void TcpConnection::Write(const std::string &s) {
         std::string data(s);
-        eventPool_->PutTask(std::bind(&TcpConnection::QueueWrite, shared_from_this(), s), channel_);
+        eventPool_->PutTask(std::bind(&TcpConnection::queueWrite, shared_from_this(), data), channel_);
     }
 
     void TcpConnection::Write(const char *data, size_t size) {
@@ -47,10 +47,8 @@ namespace Yan {
 
     void TcpConnection::Disable() {
         if(isConnected_){
-            isConnected_ = false;
             channel_.Disable();
-            if(connectionCallback_)
-                connectionCallback_(shared_from_this());
+            isConnected_ = false;
         }
     }
 
@@ -61,9 +59,9 @@ namespace Yan {
         isConnected_ = false;
     }
 
-    void TcpConnection::QueueWrite(const std::string &s) {
+    void TcpConnection::queueWrite(const std::string &s) {
         if(!isConnected_){
-            LOG_WARN("TcpConnection::QueueWrite, unable to write as disconnected\n");
+            LOG_WARN("TcpConnection::queueWrite, unable to write as disconnected\n");
             return;
         }
 
@@ -72,7 +70,7 @@ namespace Yan {
 
         if(outBuffer_.ReadableBytes() == 0){
             int result = ::write(channel_.GetFd(), data, size);
-            if(result > 0){      //
+            if(result > 0){
                 size -= result;
                 if(size == 0 && writeCompleteCallback_){
                     eventPool_->PutTask(std::bind(writeCompleteCallback_, shared_from_this()), channel_);
@@ -90,7 +88,7 @@ namespace Yan {
         }
     }
 
-    void TcpConnection::OnWrite(){
+    void TcpConnection::onWrite(){
         if(outBuffer_.ReadableBytes() == 0){
             return;
         }
@@ -104,31 +102,34 @@ namespace Yan {
                 eventPool_->PutTask(std::bind(writeCompleteCallback_, shared_from_this()), channel_);
             }
         }else{
-            LOG_WARN("write error: %s", strerror(errno));
+            if(errno == EAGAIN){
+                LOG_TRACE("Waiting for next write.\n");
+            }else{
+                LOG_WARN("write error: %s", strerror(errno));
+            }
+
         }
     }
 
-    void TcpConnection::OnRead() {
+    void TcpConnection::onRead() {
         int saved_errno;
         int result = inBuffer_.ReadFd(channel_.GetFd(), &saved_errno);
         if (result > 0 && readCompleteCallback_) {
             eventPool_->PutTask(std::bind(readCompleteCallback_, shared_from_this(), &inBuffer_), channel_);
         }else if(result == 0) {
-            OnClose();
+            onClose();
         }else{
             if(saved_errno != EAGAIN)
-                LOG_WARN("OnRead error occur\n");
+                LOG_WARN("TcpConnection::onRead error occur\n");
         }
     }
 
-    void TcpConnection::OnClose() {
+    void TcpConnection::onClose() {
         if(isConnected_){
-            isConnected_ = false;
             channel_.Disable();
-            if(connectionCallback_)
-                connectionCallback_(shared_from_this());
             if(closeCallback_)
                 closeCallback_(shared_from_this());
+            isConnected_ = false;
         }
     }
 

@@ -20,15 +20,13 @@ namespace Yan {
         typedef std::function<void()> Task;
         typedef Epoller::ChannelList ChannelList;
 
-        typedef std::function<void()> Task;
-        typedef Common::BlockingQueue<Task> IOTaskQueue;
-
         EventPool(int epollers, int workers, int epollMs = 10000);
         ~EventPool();
 
         void Start();
         void Stop();
-        void Wakeup();
+        void WakeupAll();
+        void WakeupOne(int which);
 
         void AddChannel(Channel* ch);
         void DisableChannel(Channel* ch);
@@ -37,11 +35,8 @@ namespace Yan {
         void PutTask(const Task& t, const Channel& ch);
         void PutTask(const Task& t, int which = 0);
 
-        void PutIOTask(const Task& t, const Channel& ch);
-        void PutIOTask(const Task& t, int which = 0);
-
     private:
-        void PollFunc(int which);
+        void pollFunc(int which);
 
         const int epollMs_;
         volatile std::atomic_bool isRunning_;
@@ -51,7 +46,6 @@ namespace Yan {
         boost::ptr_vector<Epoller> epollers_;
         boost::ptr_vector<Socket> wakeupSockets_;
         boost::ptr_vector<Channel> wakeupChannel_;
-        boost::ptr_vector<IOTaskQueue> ioTaskQueues_;
 
         Common::ThreadPool epollerThreads_;
         Common::ThreadPool workerThreads_;
