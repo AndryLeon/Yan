@@ -1,6 +1,7 @@
 
 #include "tcpserver.h"
 #include <netinet/in.h>
+#include <cassert>
 
 namespace Yan {
 

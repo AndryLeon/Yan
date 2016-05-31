@@ -1,5 +1,6 @@
 
 #include <sys/eventfd.h>
+#include <cassert>
 
 #include "eventpool.h"
 #include "socket.h"

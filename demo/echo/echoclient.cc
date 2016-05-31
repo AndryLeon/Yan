@@ -1,6 +1,5 @@
-#include <csignal>
+
 #include "../src/Network/tcpclient.h"
-#include <fstream>
 
 using namespace Yan;
 
@@ -39,30 +38,16 @@ private:
     TcpClient tcpClient_;
 };
 
-bool stop = false;
-
-void SignalStop(int) {
-    printf("Stop running...\n");
-    stop = true;
-}
-
 
 int main() {
-    ::signal(SIGINT, SignalStop);
-
-
-    EventPool event_pool(1, 1);
+    EventPool event_pool(1, 2);
     event_pool.Start();
 
-    InetAddress remote("291.223.193.117", 9527);
+    InetAddress remote("127.0.0.1", 9527);
     EchoClient client(&event_pool, remote);
     client.Connect();
 
     while (true) {
-        if (stop) {
-            event_pool.Stop();
-            break;
-        }
-        //   ::usleep(1000);
+        ::usleep(1000);
     }
 }

@@ -6,7 +6,7 @@
 
 #include <boost/scoped_ptr.hpp>
 
-#include "Common/noncopyable.h"
+#include "../Common/noncopyable.h"
 #include "inet_address.h"
 #include "eventpool.h"
 

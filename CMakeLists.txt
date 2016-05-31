@@ -1,45 +1,22 @@
 cmake_minimum_required(VERSION 2.6)
+project(Yan CXX)
 
-project(Yan)
-
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Debug")
-endif()
-
-set(CXX_FLAGS
-        -g
-        -march=native
-        -rdynamic
-        -std=c++11
-        )
-
-string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
-
-set(CMAKE_CXX_COMPILER "g++")
-set(CMAKE_CXX_FLAGS_DEBUG "-O2")
-
-string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
-message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_${BUILD_TYPE}})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
 
 find_package(Boost REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/src)
 
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 
-file(GLOB_RECURSE SOURCE
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/Network/*.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/Network/*.cc
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/Common/*.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/Common/*.cc
-        )
+file(GLOB_RECURSE SOURCE_FILES
+        ${PROJECT_SOURCE_DIR}/src/Common/*.cc
+        ${PROJECT_SOURCE_DIR}/src/Network/*.cc
+)
 
-add_library(Yan ${SOURCE})
-target_link_libraries(Yan pthread rt)
-set_target_properties(Yan PROPERTIES OUTPUT_NAME yohub)
+add_library(Yan ${SOURCE_FILES})
 install(TARGETS Yan DESTINATION lib)
 
-add_subdirectory(demo)
+add_subdirectory(demo/echo)

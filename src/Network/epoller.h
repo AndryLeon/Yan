@@ -6,7 +6,7 @@
 
 #include <sys/epoll.h>
 
-#include "Common/noncopyable.h"
+#include "../Common/noncopyable.h"
 
 
 namespace Yan {

@@ -2,12 +2,12 @@
 #ifndef YAN_BUFFER_H
 #define YAN_BUFFER_H
 
-#include "Common/slice.h"
-#include "Common/log.h"
+#include "../Common/slice.h"
+#include "../Common/log.h"
 #include <string>
 #include <vector>
-#include <assert.h>
 #include <unistd.h>
+#include <cassert>
 
 namespace Yan{
 

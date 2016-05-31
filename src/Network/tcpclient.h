@@ -3,8 +3,8 @@
 #define YAN_TCPCLIENT_H
 
 #include <atomic>
-#include "Common/noncopyable.h"
-#include "Common/mutex.h"
+#include "../Common/noncopyable.h"
+#include "../Common/mutex.h"
 #include "eventpool.h"
 #include "connector.h"
 #include "tcpconnection.h"

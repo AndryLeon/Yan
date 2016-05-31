@@ -1,6 +1,5 @@
 
 #include "tcpclient.h"
-#include "../Common/mutex.h"
 
 namespace Yan {
 

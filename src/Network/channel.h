@@ -4,7 +4,7 @@
 
 #include <atomic>
 #include <memory>
-#include "Common/noncopyable.h"
+#include "../Common/noncopyable.h"
 
 namespace Yan {
 

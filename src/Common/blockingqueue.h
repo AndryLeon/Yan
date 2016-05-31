@@ -2,7 +2,6 @@
 #ifndef YAN_BLOCKINGQUEUE_H
 #define YAN_BLOCKINGQUEUE_H
 
-
 #include <queue>
 #include "noncopyable.h"
 #include "condition.h"

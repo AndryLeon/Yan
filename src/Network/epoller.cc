@@ -58,10 +58,12 @@ namespace Yan {
     }
 
     void Epoller::DeleteChannel(Channel* ch){
-        ch->SetStatus(Delete);
-        LOG_TRACE("Channel::Delete fd : %d\n", ch->GetFd());
-        if(::epoll_ctl(epollFd_, EPOLL_CTL_DEL, ch->GetFd(), NULL) < 0){
-            LOG_WARN("Epoller::DeleteChannel, error: %s", strerror(errno));
+        if(ch->GetStatus() != Delete && ch->GetStatus() != New){
+            ch->SetStatus(Delete);
+            LOG_TRACE("Channel::Delete fd : %d\n", ch->GetFd());
+            if(::epoll_ctl(epollFd_, EPOLL_CTL_DEL, ch->GetFd(), NULL) < 0){
+                LOG_WARN("Epoller::DeleteChannel, error: %s", strerror(errno));
+            }
         }
     }
 

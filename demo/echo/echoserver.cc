@@ -1,4 +1,4 @@
-#include <csignal>
+
 #include "../src/Network/tcpserver.h"
 
 using namespace Yan;
@@ -33,27 +33,16 @@ private:
     TcpServer tcpServer_;
 };
 
-bool stop = false;
-
-void SignalStop(int) {
-    LOG_TRACE("Stop running...");
-    stop = true;
-}
 
 int main(){
-    ::signal(SIGINT, SignalStop);
-
-    EventPool event_pool(1, 1);
-    InetAddress bindaddr("127.0.0.1", 9527);
+    EventPool event_pool(1, 2);
     event_pool.Start();
+
+    InetAddress bindaddr("127.0.0.1", 9527);
     EchoServer server(&event_pool, bindaddr);
     server.Start();
 
     while (true) {
-        if (stop) {
-            event_pool.Stop();
-            break;
-        }
         ::usleep(1000);
     }
 
