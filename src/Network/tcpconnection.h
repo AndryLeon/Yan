@@ -4,7 +4,7 @@
 
 #include <boost/enable_shared_from_this.hpp>
 
-#include "../Common/noncopyable.h"
+#include "Common/noncopyable.h"
 #include "util.h"
 #include "socket.h"
 #include "channel.h"

@@ -58,7 +58,7 @@ namespace Yan {
 
             ThreadData* data = new ThreadData(this->threadFunc_);
             pthread_create(&pid_, NULL, &startThread, data);
-            LOG_TRACE("Thread::Start : %d, pid : %d\n", GetPid(), pid_);
+            LOG_TRACE("Thread::Start : %d, pid : %ld\n", GetPid(), pid_);
         }
 
         void Thread::Join(){
