@@ -1,45 +1,45 @@
 cmake_minimum_required(VERSION 2.6)
+
 project(Yan)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Debug")
+endif()
 
-set(SOURCE_FILES
-        demo/echoserver.cc
+set(CXX_FLAGS
+        -g
+        -march=native
+        -rdynamic
+        -std=c++11
+        )
 
-        Common/blockingqueue.h
-        Common/condition.h
-        Common/log.cc
-        Common/log.h
-        Common/mutex.h
-        Common/noncopyable.h
-        Common/slice.h
-        Common/thread.cc
-        Common/thread.h
-        Common/threadpool.cc
-        Common/threadpool.h
-        Common/timestamp.h
+string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
-        Network/acceptor.cc
-        Network/acceptor.h
-        Network/buffer.h
-        Network/channel.cc
-        Network/channel.h
-        Network/connector.cc
-        Network/connector.h
-        Network/epoller.cc
-        Network/epoller.h
-        Network/eventpool.cc
-        Network/eventpool.h
-        Network/inet_address.h
-        Network/socket.cc
-        Network/socket.h
-        Network/tcpclient.cc
-        Network/tcpclient.h
-        Network/tcpconnection.cc
-        Network/tcpconnection.h
-        Network/tcpserver.cc
-        Network/tcpserver.h
-        Network/util.h
-        Network/timequeue.h)
+set(CMAKE_CXX_COMPILER "g++")
+set(CMAKE_CXX_FLAGS_DEBUG "-O2")
 
-add_executable(Yan ${SOURCE_FILES})
+string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS} " " ${CMAKE_CXX_FLAGS_${BUILD_TYPE}})
+
+find_package(Boost REQUIRED)
+
+include_directories(${Boost_INCLUDE_DIRS})
+include_directories(${PROJECT_SOURCE_DIR}/src)
+
+set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+
+file(GLOB_RECURSE SOURCE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Network/*.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Network/*.cc
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Common/*.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/Common/*.cc
+        )
+
+add_library(Yan ${SOURCE})
+target_link_libraries(Yan pthread rt)
+set_target_properties(Yan PROPERTIES OUTPUT_NAME yohub)
+install(TARGETS Yan DESTINATION lib)
+
+add_subdirectory(demo)

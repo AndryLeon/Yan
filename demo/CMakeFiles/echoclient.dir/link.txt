@@ -1,1 +1,0 @@
-g++   -g -march=native -rdynamic -std=c++11 -O2    CMakeFiles/echoclient.dir/echoclient.cc.o  -o ../bin/echoclient -rdynamic ../lib/libyohub.a -lpthread -lrt 
