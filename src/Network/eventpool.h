@@ -6,9 +6,9 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 
 #include "epoller.h"
-#include "../Common/noncopyable.h"
-#include "../Common/threadpool.h"
-#include "../Common/blockingqueue.h"
+#include "Common/noncopyable.h"
+#include "Common/threadpool.h"
+#include "Common/blockingqueue.h"
 
 namespace Yan {
 

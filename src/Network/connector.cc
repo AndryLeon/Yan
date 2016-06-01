@@ -2,7 +2,7 @@
 #include "connector.h"
 #include "socket.h"
 #include "channel.h"
-#include "../Common/log.h"
+#include "Common/log.h"
 
 namespace Yan {
 

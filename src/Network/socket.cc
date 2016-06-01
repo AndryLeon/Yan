@@ -6,7 +6,7 @@
 #include <errno.h>
 #include "socket.h"
 #include "inet_address.h"
-#include "../Common/log.h"
+#include "Common/log.h"
 
 namespace Yan {
 

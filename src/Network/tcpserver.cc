@@ -1,7 +1,6 @@
 
 #include "tcpserver.h"
 #include <netinet/in.h>
-#include <cassert>
 
 namespace Yan {
 
@@ -12,7 +11,7 @@ namespace Yan {
          acceptor_(eventPool),
          eventPool_(eventPool)
     {
-        acceptor_.SetOnNewConnectionCallback(std::bind(&TcpServer::OnNewConnection, this,
+        acceptor_.SetOnNewConnectionCallback(std::bind(&TcpServer::onNewConnection, this,
                                                        std::placeholders::_1, std::placeholders::_2));
     }
 
@@ -33,14 +32,18 @@ namespace Yan {
         }
     }
 
-    void TcpServer::OnNewConnection(int fd, const InetAddress& peeraddr) {
+    void TcpServer::RemoveConnection(const TcpConnectionPtr& conn){
+        eventPool_->PutTask(std::bind(&TcpServer::removeConnection, this, conn), conn->GetChannelID());
+    }
+
+    void TcpServer::onNewConnection(int fd, const InetAddress& peeraddr) {
         InetAddress local(Socket::GetLocalSockAddr(fd));
         TcpConnectionPtr tmpPtr(new TcpConnection(fd, local, peeraddr, eventPool_));
 
         tmpPtr->SetConnectionCallback(connectionCallback_);
         tmpPtr->SetWriteCallback(writeCompleteCallback_);
         tmpPtr->SetReadCallback(readCompleteCallback_);
-        tmpPtr->SetCloseCallback(std::bind(&TcpServer::OnClose, this, std::placeholders::_1));
+        tmpPtr->SetCloseCallback(std::bind(&TcpServer::onClose, this, std::placeholders::_1));
 
         tmpPtr->Build();
 
@@ -48,10 +51,10 @@ namespace Yan {
         connectionMap_[tmpPtr->GetID()] = tmpPtr;
     }
 
-    void TcpServer::OnClose(const TcpConnectionPtr& conPtr) {
+    void TcpServer::onClose(const TcpConnectionPtr& conPtr) {
         {
-            LOG_TRACE("TcpServer::OnClose\n");
             Common::MutexLock m(mutex_);
+            LOG_TRACE("TcpServer::OnClose\n");
             auto iter = connectionMap_.find(conPtr->GetID());
             assert(iter != connectionMap_.end());
             connectionMap_.erase(iter);
@@ -59,5 +62,14 @@ namespace Yan {
         conPtr->Disable();  //can be delete
     }
 
+    void TcpServer::removeConnection(const TcpConnectionPtr& conPtr) {
+        {
+            Common::MutexLock m(mutex_);
+            auto iter = connectionMap_.find(conPtr->GetID());
+            assert(iter != connectionMap_.end());
+            connectionMap_.erase(iter);
+        }
+        conPtr->ConnectDestroyed();
+    }
 }
 

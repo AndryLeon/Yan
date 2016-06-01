@@ -5,7 +5,7 @@
 #include "eventpool.h"
 #include "socket.h"
 #include "channel.h"
-#include "../Common/log.h"
+#include "Common/log.h"
 
 namespace Yan {
 
@@ -92,7 +92,7 @@ namespace Yan {
     }
 
     void EventPool::PutTask(const Task &t, int which) {
-        workerThreads_.Schedule(t, which);
+        workerThreads_.Schedule(t, which%workersNum_);
     }
 
 

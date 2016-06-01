@@ -2,7 +2,7 @@
 #include <fcntl.h>
 #include <zconf.h>
 #include "acceptor.h"
-#include "../Common/log.h"
+#include "Common/log.h"
 
 namespace Yan {
 

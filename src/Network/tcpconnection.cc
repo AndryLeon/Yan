@@ -1,6 +1,5 @@
 
 #include "tcpconnection.h"
-#include "../Common/slice.h"
 
 namespace Yan {
 
@@ -73,7 +72,8 @@ namespace Yan {
             if(result > 0){
                 size -= result;
                 if(size == 0 && writeCompleteCallback_){
-                    eventPool_->PutTask(std::bind(writeCompleteCallback_, shared_from_this()), channel_);
+                //    eventPool_->PutTask(std::bind(writeCompleteCallback_, shared_from_this()), channel_);
+                    writeCompleteCallback_(shared_from_this());
                 }
             }else{
                 if(errno == EAGAIN) {
@@ -99,7 +99,8 @@ namespace Yan {
         if(result > 0){
             outBuffer_.ReadIndexInc(result);
             if(outBuffer_.ReadableBytes() == 0 && writeCompleteCallback_){
-                eventPool_->PutTask(std::bind(writeCompleteCallback_, shared_from_this()), channel_);
+            //    eventPool_->PutTask(std::bind(writeCompleteCallback_, shared_from_this()), channel_);
+                writeCompleteCallback_(shared_from_this());
             }
         }else{
             if(errno == EAGAIN){
@@ -115,12 +116,13 @@ namespace Yan {
         int saved_errno;
         int result = inBuffer_.ReadFd(channel_.GetFd(), &saved_errno);
         if (result > 0 && readCompleteCallback_) {
-            eventPool_->PutTask(std::bind(readCompleteCallback_, shared_from_this(), &inBuffer_), channel_);
+        //    eventPool_->PutTask(std::bind(readCompleteCallback_, shared_from_this(), &inBuffer_), channel_);
+            readCompleteCallback_(shared_from_this(), &inBuffer_);
         }else if(result == 0) {
             onClose();
         }else{
             if(saved_errno != EAGAIN)
-                LOG_WARN("TcpConnection::onRead error occur\n");
+                LOG_WARN("TcpConnection::onRead error occur, error:%s\n", strerror(errno));
         }
     }
 
@@ -133,6 +135,10 @@ namespace Yan {
         }
     }
 
+    void TcpConnection::ConnectDestroyed() {
+        channel_.Disable();
+        channel_.Unregister();
+    }
 
 }
 

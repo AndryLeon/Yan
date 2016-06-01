@@ -4,7 +4,7 @@
 
 #include <functional>
 #include <atomic>
-#include "../Common/noncopyable.h"
+#include "Common/noncopyable.h"
 #include "inet_address.h"
 #include "socket.h"
 #include "channel.h"

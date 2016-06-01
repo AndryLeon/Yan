@@ -4,7 +4,7 @@
 
 #include <map>
 
-#include "../Common/noncopyable.h"
+#include "Common/noncopyable.h"
 #include "channel.h"
 #include "tcpconnection.h"
 #include "acceptor.h"
@@ -19,6 +19,7 @@ namespace Yan {
         ~TcpServer();
 
         void Start();
+        void RemoveConnection(const TcpConnectionPtr& conn);
 
         void SetConnectionCallback(const ConnectionCallback& cb){
             connectionCallback_ = cb;
@@ -33,8 +34,10 @@ namespace Yan {
         }
 
     private:
-        void OnNewConnection(int fd, const InetAddress& peeraddr);
-        void OnClose(const TcpConnectionPtr&);
+        void onNewConnection(int fd, const InetAddress& peeraddr);
+        void onClose(const TcpConnectionPtr&);
+
+        void removeConnection(const TcpConnectionPtr& conn);
 
         volatile std::atomic_bool isStart_;
         volatile std::atomic_int connectionNum_;

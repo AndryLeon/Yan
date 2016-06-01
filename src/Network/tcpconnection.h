@@ -4,7 +4,7 @@
 
 #include <boost/enable_shared_from_this.hpp>
 
-#include "../Common/noncopyable.h"
+#include "Common/noncopyable.h"
 #include "util.h"
 #include "socket.h"
 #include "channel.h"
@@ -26,6 +26,10 @@ namespace Yan {
 
         int GetID() const{
             return id_;
+        }
+
+        int GetChannelID() const {
+            return channel_.GetID();
         }
 
         void Build();
@@ -56,6 +60,7 @@ namespace Yan {
             return remoteAddr_.ToString();
         }
 
+        void ConnectDestroyed();
 
     private:
         void queueWrite(const std::string& s);

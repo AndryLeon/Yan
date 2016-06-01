@@ -3,7 +3,7 @@
 
 #include "channel.h"
 #include "eventpool.h"
-#include "../Common/log.h"
+#include "Common/log.h"
 
 namespace Yan {
 
@@ -51,6 +51,7 @@ namespace Yan {
             }
         }else{
             safeEventHandle();
+            //LOG_TRACE("Channel::EventHandle, untied\n");
         }
     }
 
